@@ -1,0 +1,10 @@
+MaxFileSize        = 1048576
+LoginSalt          = 'yumihara'
+StaticDomain       = ""
+DocumentRoot       = "siteroot"
+Language           = "en-GB"
+RealIPHeader       = None
+ShowErrorTraceback = False
+GenericErrorFile   = "static/error/500.html"
+SiteName           = "http://mikado.pyboard.net"
+Admins             = ["stal@pyboard.net"]

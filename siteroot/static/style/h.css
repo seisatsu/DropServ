@@ -1,0 +1,39 @@
+@font-face {
+	font-family:b;
+	src:url(mdkr.ttf);
+}
+body {
+	background-color:rgb(0,0,0);
+	color:white;
+}
+#co {
+	position:absolute; 
+	top:0; 
+	bottom:0; 
+	left:0; 
+	right:0; 
+	margin:auto; 
+	height:630px;
+	width:799px;
+}
+#cc {
+	background-image:url(e.png);
+}
+#foot {
+	text-align:center;
+	margin:1em;
+	font-size:8pt;
+	font-family:sans-serif;
+}
+#w {
+	font-size:31px;
+	color:black;
+	font-family:b;
+	text-transform:uppercase;
+	line-height:584px;
+	text-align:center;
+	width:421px;
+}
+#r {
+	color:darkGrey;
+}
