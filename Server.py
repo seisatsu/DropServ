@@ -96,7 +96,12 @@ class Puush(object):
             request = Objects.Request(self, environ)
         try:
             for e in self.Pages:
-                if requested_resource in self.Pages[e]:
+                if request.contains("Host") and request["Host"].split(":")[0].strip("/").lower() + requested_resource in self.Pages[e]:
+                    response = self.Pages[e][request["Host"].split(":")[0].strip("/").lower() + requested_resource](request);
+                    Headers = dict(Headers.items() + response["headers"].items())
+                    start_response(response["status"] or StatusCode, self.wsgize(Headers))
+                    return response["rdata"]
+                elif requested_resource in self.Pages[e]:
                     response = self.Pages[e][requested_resource](request);
                     Headers = dict(Headers.items() + response["headers"].items())
                     start_response(response["status"] or StatusCode, self.wsgize(Headers))

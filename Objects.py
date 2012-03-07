@@ -88,18 +88,19 @@ class Extension(object):
         if not os.path.exists(self.dataFolder):
             os.mkdir(self.dataFolder)
 
-    def addPage(self, uri, function):
+    def addPage(self, uri, function, host=""):
         try:
             self.instance.Pages
         except AttributeError:
             self.instance.Pages = {}
-        if uri in self.instance.Pages:
-            self.log("There is already a function bound to this URI!")
+        if self.IDENTIFIER not in self.instance.Pages:
+            self.instance.Pages[self.IDENTIFIER] = {}
+        for key in self.instance.Pages:
+            if "{0}/{1}".format(host.lower().strip("/"), uri.strip("/")) in self.instance.Pages[key]:
+                self.log("There is already a function bound to this URI!")
         else:
-            if self.IDENTIFIER not in self.instance.Pages:
-                self.instance.Pages[self.IDENTIFIER] = {}
-            self.instance.Pages[self.IDENTIFIER][uri] = function
-            self.log("Bound {0}, {1}".format(uri, function))
+            self.instance.Pages[self.IDENTIFIER]["{0}/{1}".format(host.lower().strip("/ "), uri.strip("/ "))] = function
+            self.log("Bound {0} -> {1}".format("{0}/{1}".format(host.lower().strip("/ "), uri.strip("/ ")), function))
 
     def log(self, message):
         print("["+self.IDENTIFIER+"]: "+str(message))

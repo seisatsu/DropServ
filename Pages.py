@@ -119,19 +119,19 @@ class BasePages(Objects.Extension):
             if not request.authenticated:
                 for field in ["email", "password", "password2"]:
                     if field not in request.form:
-                        return self.generateError("400 Bad Request", etext="Please fill out the form.", return_to="/register.html")
+                        return self.generateError("400 Bad Request", etext="Please fill out the form.", return_to="/register")
                 # Check fields
                 em = request.form["email"].value.decode("utf-8").strip()
                 pw = request.form["password"].value.decode("utf-8").strip()
                 pw2 = request.form["password2"].value.decode("utf-8").strip()
                 if len(em.split("@")) != 2 or len(em) >= 256 or "." not in em:
-                    return self.generateError("400 Bad Request", etext="Invalid e-mail address.", return_to="/register.html")
+                    return self.generateError("400 Bad Request", etext="Invalid e-mail address.", return_to="/register")
                 elif self.instance.Database.getUser(em):
-                    return self.generateError("400 Bad Request", etext="This e-mail address has already been used.", return_to="/register.html")
+                    return self.generateError("400 Bad Request", etext="This e-mail address has already been used.", return_to="/register")
                 elif len(pw) <= 4:
-                    return self.generateError("400 Bad Request", etext="Passwords must be 5 or more characters in length.", return_to="/register.html")
+                    return self.generateError("400 Bad Request", etext="Passwords must be 5 or more characters in length.", return_to="/register")
                 elif pw != pw2:
-                    return self.generateError("400 Bad Request", etext="Passwords didn't match.", return_to="/register.html")
+                    return self.generateError("400 Bad Request", etext="Passwords didn't match.", return_to="/register")
                 else:
                     self.instance.Database.addUser(em, pw)
                     return self.generateError("200 OK", heading="Success", etext="Your API key is: {0}".format(self.instance.Database.getUser(em)["apikey"]))

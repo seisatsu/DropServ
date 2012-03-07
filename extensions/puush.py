@@ -46,6 +46,8 @@ class main(Objects.Extension):
                     return Objects.Response(s="200 OK", h={"Content-Type": "text/html"}, r="-1")
                 else:
                     lastdrops = self.instance.Database.getDropsByUser(user["email"], limit=10, sort_by="uploaded_on")
+                    lastdrops.reverse()
+                    
             else:
                 return Objects.Response(s="200 OK", h={"Content-Type": "text/html"}, r="-1")
                 
