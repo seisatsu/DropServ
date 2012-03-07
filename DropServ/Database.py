@@ -150,8 +150,6 @@ class DropDatabase(SQLiteBase):
         return dropId
 
     def deleteDrop(self, drop):
-        s = getDrop("url", drop)
-        self.runCustomQuery("UPDATE users SET usage=usage-? WHERE email=?;", (s[0][5], s[0][1],), lock=True)
         self.runCustomQuery("DELETE FROM drops WHERE url=?", (str(drop),), lock=True)
         try:
             os.remove("{0}/{1}".format(self.instance.docroot, drop))

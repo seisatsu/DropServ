@@ -1,0 +1,16 @@
+.separator.t {
+    margin-top:1.5em;
+}
+.eimg {
+    border:1px solid rgb(183,197,217);
+	border-radius:6px;
+}
+.eth {
+	text-align:left;
+	padding:0 1.3em;
+}
+.et {
+	text-align:left;
+	font-size:10pt;
+	padding:0 2em;
+}
