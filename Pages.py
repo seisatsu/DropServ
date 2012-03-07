@@ -117,6 +117,8 @@ class BasePages(Objects.Extension):
     def registerUser(self, request):
         if request.post:
             if not request.authenticated:
+                if not self.instance.conf["OpenRegistration"]:
+                    return self.generateError("400 Bad Request", etext="Sorry, registration isn't currently open.", return_to="/")
                 for field in ["email", "password", "password2"]:
                     if field not in request.form:
                         return self.generateError("400 Bad Request", etext="Please fill out the form.", return_to="/register")
