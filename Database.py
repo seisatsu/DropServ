@@ -104,12 +104,9 @@ class DropDatabase(SQLiteBase):
                 "timestamp": s[0][7]
             }
 
-    def getDropsByUser(self, userName, limit=None, sort_by="id"):
+    def getDropsByUser(self, userName, limit=-1, sort_by="id"):
         b = []
-        if not limit:
-            s = self.runCustomQuery("SELECT * FROM drops WHERE owner=?", (userName,), requiresCommit=False)
-        else:
-            s = self.runCustomQuery("SELECT * FROM drops WHERE owner=? LIMIT ?", (userName, int(limit)), requiresCommit=False)
+        s = self.runCustomQuery("SELECT * FROM drops WHERE owner=? LIMIT ?", (userName, int(limit)), requiresCommit=False)
         if s:
             for d in s:
                 b.append({
