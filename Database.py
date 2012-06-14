@@ -68,8 +68,11 @@ class DropDatabase(SQLiteBase):
         apikey = hashlib.md5(name+ph).hexdigest().upper()
         self.runCustomQuery("INSERT INTO users VALUES (NULL,?,?,?,0)", (name.strip(), ph, apikey), lock=True)
 
-    def getUser(self, name):
-        s = self.runCustomQuery("SELECT * FROM users WHERE email=?", (name,), requiresCommit=False)
+    def getUser(self, name, apikey=None):
+        if apikey:
+            s = self.runCustomQuery("SELECT * FROM users WHERE apikey=?", (apikey,), requiresCommit=False)
+        else:
+            s = self.runCustomQuery("SELECT * FROM users WHERE email=?", (name,), requiresCommit=False)
         if not s:
             return None
         else:
