@@ -58,7 +58,8 @@ class Puush(object):
             else:
                 print(self.lang["PB_INIT_EXTENSION_CLASS"].format(id=self._extm[-1].main.IDENTIFIER))
                 self.Extensions.append(self._extm[-1].main(self))
-        except AttributeError:
+        except AttributeError, e:
+            traceback.print_exc()
             del self._extm[-1]
             print(self.lang["PB_INVALID_EXTENSION"].format(f=i))
 

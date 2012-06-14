@@ -117,7 +117,7 @@ class Request(object):
     """PyBoard HTTP request."""
     def __init__(self, instance, environ, origin=None):
         self.environ = environ;
-        self.authenticated = 0 # Determines whether the sender is logged in as a user. To retrieve user info, call instance.MasterDatabase.getUserInfo(this).
+        self.authenticated = 0 # Determines whether the sender is logged in as a user. To retrieve user info, call instance.MasterDatabase.getUserInfo(this.user).
         self.url = urllib.unquote(environ["PATH_INFO"]);
         self.query = environ["QUERY_STRING"];
         self.origin = origin or environ["REMOTE_ADDR"]

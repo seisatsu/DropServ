@@ -168,7 +168,7 @@ class BasePages(Objects.Extension):
                         "size": len(request.form["file"].value)
                     }
                     while True:
-                        table["drop"] = self.instance.func.mkstring(4)
+                        table["drop"] = self.instance.func.mkstring(self.instance.conf["DropURLLength"])
                         try:
                             self.instance.Database[table["drop"]]
                         except KeyError:
