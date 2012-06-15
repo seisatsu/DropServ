@@ -55,7 +55,7 @@ class DropDatabase(SQLiteBase):
 
     def __getitem__(self, item):
         try:
-            s = self.runCustomQuery("SELECT * FROM drops WHERE url=?", (item,), requiresCommit=False)
+            s = self.runCustomQuery("SELECT * FROM files WHERE url=?", (item,), requiresCommit=False)
         except sqlite3.OperationalError:
             raise KeyError(item)
         if s:
@@ -94,7 +94,7 @@ class DropDatabase(SQLiteBase):
         return user
 
     def getDrop(self, method, data):
-        s = self.runCustomQuery("SELECT * FROM drops WHERE ?=?", (method, data,), requiresCommit=False)
+        s = self.runCustomQuery("SELECT * FROM files WHERE ?=?", (method, data,), requiresCommit=False)
         if not s:
             return None
         else:
@@ -111,7 +111,7 @@ class DropDatabase(SQLiteBase):
 
     def getDropsByUser(self, userName, limit=-1, sort_by="id"):
         b = []
-        s = self.runCustomQuery("SELECT * FROM drops WHERE owner=? LIMIT ?", (userName, int(limit)), requiresCommit=False)
+        s = self.runCustomQuery("SELECT * FROM files WHERE owner=? LIMIT ?", (userName, int(limit)), requiresCommit=False)
         if s:
             for d in s:
                 b.append({
@@ -130,7 +130,7 @@ class DropDatabase(SQLiteBase):
 
     def getAllDrops(self):
         b = []
-        s = self.runCustomQuery("SELECT * FROM drops", requiresCommit=False)
+        s = self.runCustomQuery("SELECT * FROM files", requiresCommit=False)
         if s:
             for d in s:
                 b.append({
@@ -148,13 +148,13 @@ class DropDatabase(SQLiteBase):
             return []
 
     def bumpViews(self, dropId):
-        self.runCustomQuery("UPDATE drops SET views=views+1 WHERE id=?", (int(dropId),), lock=True)
+        self.runCustomQuery("UPDATE files SET views=views+1 WHERE id=?", (int(dropId),), lock=True)
         return dropId
 
     def deleteDrop(self, drop):
         s = getDrop("url", drop)
         self.runCustomQuery("UPDATE users SET usage=usage-? WHERE email=?;", (s[0][5], s[0][1],), lock=True)
-        self.runCustomQuery("DELETE FROM drops WHERE url=?", (str(drop),), lock=True)
+        self.runCustomQuery("DELETE FROM files WHERE url=?", (str(drop),), lock=True)
         try:
             os.remove("{0}/{1}".format(self.instance.docroot, drop))
         except OSError:
@@ -167,7 +167,7 @@ class DropDatabase(SQLiteBase):
             table["realname"], table["size"], table["ts"]), lock=True)
 
     def setup_db(self):
-        self.runCustomQuery("CREATE TABLE drops (id INTEGER PRIMARY KEY AUTOINCREMENT, "\
+        self.runCustomQuery("CREATE TABLE files (id INTEGER PRIMARY KEY AUTOINCREMENT, "\
             "owner TEXT, url TEXT, mimetype TEXT, filename TEXT," \
             "size INTEGER, views INTEGER, timestamp INTEGER);", lock=True)
         self.runCustomQuery("CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, "\
