@@ -162,7 +162,7 @@ class DropDatabase(SQLiteBase):
         return drop
 
     def insertFileRecord(self, table):
-        self.runCustomQuery("INSERT INTO drops VALUES (NULL,?,?,?,?,?,0,?)",
+        self.runCustomQuery("INSERT INTO files VALUES (NULL,?,?,?,?,?,0,?)",
             (table["email"], table["drop"], table["mimetype"],
             table["realname"], table["size"], table["ts"]), lock=True)
 
