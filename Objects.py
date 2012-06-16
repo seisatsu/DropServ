@@ -9,7 +9,7 @@ import os
 
 class Configuration(object):
     """Stores configuration values."""
-    version = "0.1"
+    version = "0.2"
 
     def __init__(self):
         print("* Reading configuration.")
