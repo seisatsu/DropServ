@@ -46,6 +46,19 @@ class Functions(object):
                 del self.instance.Sessions[x]
         return "|".join([sid, token])
 
+    def hashPassword(self, password, salt=None):
+        if not salt:
+            salt = self.mkstring(len(password))
+        else:
+            salt = str(salt)
+        print password
+        print salt
+        saltedPass = "".join(map(lambda x, y: x + y, password, salt))
+        print saltedPass
+        hashed = hashlib.sha512(saltedPass).hexdigest()
+        print hashed
+        return (hashed, salt)
+
     def mkstring(self, length):
         s = ""
         for x in range(length):

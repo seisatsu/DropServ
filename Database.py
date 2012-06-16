@@ -64,9 +64,9 @@ class DropDatabase(SQLiteBase):
             raise KeyError(item)
 
     def addUser(self, name, password):
-        ph = hashlib.sha512(password).hexdigest()
+        ph, salt = self.instance.func.hashPassword(password)
         apikey = hashlib.md5(name+ph).hexdigest().upper()
-        self.runCustomQuery("INSERT INTO users VALUES (NULL,?,?,?,0)", (name.strip(), ph, apikey), lock=True)
+        self.runCustomQuery("INSERT INTO users VALUES (NULL,?,?,?,?,0)", (name.strip(), ph, salt, apikey), lock=True)
 
     def getUser(self, name=None, apikey=None):
         if apikey:
@@ -82,14 +82,16 @@ class DropDatabase(SQLiteBase):
                 "id": s[0][0],
                 "email": s[0][1],
                 "pass": s[0][2],
-                "apikey": s[0][3],
-                "usage": s[0][4]
+                "salt": s[0][3],
+                "apikey": s[0][4],
+                "usage": s[0][5]
             }
 
     def changeUserPassword(self, user, newPass):
-        newHash = hashlib.sha512(newPass).hexdigest()
+        ph, salt = self.instance.func.hashPassword(password)
         apikey = hashlib.md5(user + newPass).hexdigest().upper()
-        self.runCustomQuery("UPDATE users SET passwordHash=? WHERE email=?", (newHash, user), lock=True)
+        self.runCustomQuery("UPDATE users SET passwordHash=? WHERE email=?", (ph, user), lock=True)
+        self.runCustomQuery("UPDATE users SET salt=? WHERE email=?", (salt, user), lock=True)
         self.runCustomQuery("UPDATE users SET apikey=? WHERE email=?", (apikey, user), lock=True)
         return user
 
@@ -171,4 +173,4 @@ class DropDatabase(SQLiteBase):
             "owner TEXT, url TEXT, mimetype TEXT, filename TEXT," \
             "size INTEGER, views INTEGER, timestamp INTEGER);", lock=True)
         self.runCustomQuery("CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, "\
-            "email TEXT, passwordHash TEXT, apikey TEXT, usage INTEGER);", lock=True)
+            "email TEXT, passwordHash TEXT, salt TEXT, apikey TEXT, usage INTEGER);", lock=True)

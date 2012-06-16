@@ -106,9 +106,9 @@ class BasePages(Objects.Extension):
                 if x not in request.form:
                     return self.generateError("400 Bad Request", etext="Login failed.", return_to="/login")
             user = self.instance.Database.getUser(request.form["email"].value.decode("utf-8"))
-            if not user or hashlib.sha512(request.form["password"].value.decode("utf-8")).hexdigest() != user["pass"]:
+            if not user or (self.instance.func.hashPassword(request.form["password"].value.decode("utf-8"), salt=user["salt"])[0] != user["pass"]):
                 return self.generateError("400 Bad Request", etext="Invalid username and/or password.", return_to="/login")
-            elif hashlib.sha512(request.form["password"].value.decode("utf-8")).hexdigest() == user["pass"]:
+            elif self.instance.func.hashPassword(request.form["password"].value.decode("utf-8"), salt=user["salt"])[0] == user["pass"]:
                 authToken = self.instance.func.genAuthToken(user, request.origin)
                 return Objects.Response(s="303 See Other", h={"Set-Cookie": "pypAuthToken=" + authToken, "Location": "/"}, r="")
         else:

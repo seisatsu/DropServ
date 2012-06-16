@@ -102,8 +102,18 @@ class Extension(object):
             self.instance.Pages[self.IDENTIFIER]["{0}/{1}".format(host.lower().strip("/ "), uri.strip("/ "))] = function
             self.log("Bound {0} -> {1}".format("{0}/{1}".format(host.lower().strip("/ "), uri.strip("/ ")), function))
 
+    def __str__(self):
+        return "<PBExtension {0}>".format(self.IDENTIFIER)
+    
+    __repr__ = __str__
+
     def log(self, message):
         print("["+self.IDENTIFIER+"]: "+str(message))
+
+    def redirect(self, location, headers=None):
+        if not headers:
+            headers = {}
+        return Response(s="303 See Other", h=dict(headers.items() + [("Location", location)]), r="")
 
     def generateError(self, status="500 Internal Server Error", heading="Error", return_to="/", etext="An unspecified error occurred."):
         error = {
@@ -116,8 +126,9 @@ class Extension(object):
 class Request(object):
     """PyBoard HTTP request."""
     def __init__(self, instance, environ, origin=None):
+        self.instance = instance
         self.environ = environ;
-        self.authenticated = 0 # Determines whether the sender is logged in as a user. To retrieve user info, call instance.MasterDatabase.getUserInfo(this.user).
+        self._authenticated, self._user = None, None
         self.url = urllib.unquote(environ["PATH_INFO"]);
         self.query = environ["QUERY_STRING"];
         self.origin = origin or environ["REMOTE_ADDR"]
@@ -138,15 +149,31 @@ class Request(object):
                 pass;
             if len(self.cookies) > 0:
                 self.has_cookies = True;
-            if "pypAuthToken" in self.cookies:
-                self.authenticated = instance.func.verifyLogin(self.cookies["pypAuthToken"], self.origin)
-                if self.authenticated:
-                    self.user = instance.Sessions[self.cookies["pypAuthToken"].split("|")[0]][0]
-                else:
-                    self.user = ""
-    
+
+    @property
+    def authenticated(self):
+        if self._authenticated == None:
+            self.__performAuth__()
+        return self._authenticated
+
+    @property
+    def user(self):
+        if self._user == None:
+            self.__performAuth__()
+        return self._user
+
+    def __performAuth__(self):
+        if "pypAuthToken" in self.cookies:
+            self._authenticated = self.instance.func.verifyLogin(self.cookies["pypAuthToken"], self.origin)
+            if self._authenticated:
+                self._user = self.instance.Sessions[self.cookies["pypAuthToken"].split("|")[0]][0]
+        else:
+            self._authenticated, self._user = 0, ""
+
     def contains(self, item):
         return "HTTP_"+item.upper().replace("-", "_") in self.environ
+
+    __contains__ = contains
 
     def __getitem__(self, item):
         try:

@@ -15,7 +15,7 @@ import Objects
 import Functions
 import Pages
 
-class Puush(object):
+class Framework(object):
     """HA HA HA GO FUCK A SHIT UP YOUR ASS"""
     def __init__(self):
         t = time.time()
@@ -47,7 +47,14 @@ class Puush(object):
 
     def load_extension(self, i):
         print(self.lang["PB_IMPORTING_EXTENSION"].format(file=i))
-        self._extm.append(imp.load_source("extensions.{0}".format("-".join(i.split(".")[:-1])), self.workd+"/extensions/{0}".format(i)))
+        try:
+            self._extm.append(imp.load_source("extensions.{0}".format("-".join(i.split(".")[:-1])), self.workd+"/extensions/{0}".format(i)))
+        except Exception, e:
+            print(self.lang["PB_INVALID_EXTENSION"].format(f=i, m=str(e)))
+            for line in traceback.format_exc().split("\n"):
+                if line.strip():
+                    print(line)
+            return 0
         try:
             if not self._extm[-1].main.IDENTIFIER or self._extm[-1].main.IDENTIFIER == "net.pyboard.BaseExtension":
                 del self._extm[-1]
@@ -55,13 +62,28 @@ class Puush(object):
             elif self._extm[-1].main.IDENTIFIER.startswith("net.pyboard."):
                 del self._extm[-1]
                 print(self.lang["PB_BLACKLISTED_NS"].format(e=i))
+            elif self._extm[-1].main.IDENTIFIER in self.ext_identifiers:
+                del self._extm[-1]
+                print(self.lang["PB_IDENTIFIER_CONFLICT"].format(i=self._extm[-1].main.IDENTIFIER))
             else:
                 print(self.lang["PB_INIT_EXTENSION_CLASS"].format(id=self._extm[-1].main.IDENTIFIER))
-                self.Extensions.append(self._extm[-1].main(self))
-        except AttributeError, e:
-            traceback.print_exc()
+                try:
+                    self.Extensions.append(self._extm[-1].main(self))
+                except:
+                    print("Error encountered while loading {id}'s main class:".format(id=self._extm[-1].main.IDENTIFIER))
+                    for line in traceback.format_exc().split("\n"):
+                        if line.strip():
+                            print(line)
+        except Exception, e:
             del self._extm[-1]
-            print(self.lang["PB_INVALID_EXTENSION"].format(f=i))
+            print(self.lang["PB_INVALID_EXTENSION"].format(f=i, m=str(e)))
+            for line in traceback.format_exc().split("\n"):
+                if line.strip():
+                    print(line)
+
+    @property
+    def ext_identifiers(self):
+        return [i.IDENTIFIER for i in self.Extensions]
 
     def set_paths(self):
         """Set up our working, serving, and remote directories, plus make sure that our dirs are all there"""
@@ -127,4 +149,4 @@ class Puush(object):
                 start_response("500 Internal Server Error", self.wsgize(Headers))
                 return response["rdata"]
 
-application = py = Puush()
+application = py = Framework()
