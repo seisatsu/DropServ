@@ -12,3 +12,4 @@ SiteName           = "http://your.domain.here"
 Admins             = []
 OpenRegistration   = True
 DropURLLength      = 4
+ExtensionBlacklist = []
