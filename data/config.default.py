@@ -12,4 +12,5 @@ SiteName           = "http://your.domain.here"
 Admins             = []
 OpenRegistration   = True
 DropURLLength      = 4
+LongDropURLLength  = 20
 ExtensionBlacklist = []

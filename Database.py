@@ -88,7 +88,7 @@ class DropDatabase(SQLiteBase):
             }
 
     def changeUserPassword(self, user, newPass):
-        ph, salt = self.instance.func.hashPassword(password)
+        ph, salt = self.instance.func.hashPassword(newPass)
         apikey = hashlib.md5(user + newPass).hexdigest().upper()
         self.runCustomQuery("UPDATE users SET passwordHash=? WHERE email=?", (ph, user), lock=True)
         self.runCustomQuery("UPDATE users SET salt=? WHERE email=?", (salt, user), lock=True)
@@ -96,7 +96,7 @@ class DropDatabase(SQLiteBase):
         return user
 
     def getDrop(self, method, data):
-        s = self.runCustomQuery("SELECT * FROM files WHERE ?=?", (method, data,), requiresCommit=False)
+        s = self.runCustomQuery("SELECT * FROM files WHERE {0}=?".format(method), (data,), requiresCommit=False)
         if not s:
             return None
         else:
@@ -154,9 +154,9 @@ class DropDatabase(SQLiteBase):
         return dropId
 
     def deleteDrop(self, drop):
-        s = getDrop("url", drop)
-        self.runCustomQuery("UPDATE users SET usage=usage-? WHERE email=?;", (s[0][5], s[0][1],), lock=True)
-        self.runCustomQuery("DELETE FROM files WHERE url=?", (str(drop),), lock=True)
+        s = self.getDrop("url", drop)
+        self.runCustomQuery("UPDATE users SET usage=usage-? WHERE email=?", (s["size"], s["owner"],), lock=True)
+        self.runCustomQuery("DELETE FROM files WHERE url=?", (s["url"],), lock=True)
         try:
             os.remove("{0}/{1}".format(self.instance.docroot, drop))
         except OSError:

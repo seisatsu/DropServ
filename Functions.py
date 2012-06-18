@@ -47,10 +47,14 @@ class Functions(object):
         return "|".join([sid, token])
 
     def hashPassword(self, password, salt=None):
-        if not salt:
-            salt = self.mkstring(len(password))
+        if salt == None:
+            salt = self. mkstring(len(password))
+        elif salt == "":
+            return hashlib.sha512(password).hexdigest()
         else:
             salt = str(salt)
+        if len(salt) != len(password):
+            return ("*", salt)
         saltedPass = "".join(map(lambda x, y: x + y, password, salt))
         hashed = hashlib.sha512(saltedPass).hexdigest()
         return (hashed, salt)

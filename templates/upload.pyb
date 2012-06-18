@@ -12,7 +12,8 @@
 	<h1>${LANG_UPLOAD}</h1><br>
 	<form name="input" action="/upload" method="post" enctype="multipart/form-data">
 		<input class='text ft' type='file' name='file'><br>
-		<a href="/"><button class="b half">${LANG_BACK}</button></a>
+		<div class="text ft pm"><input type="checkbox" name="long"> <label for="long">Long URL</label></div>
+		<a class="b half" href="/">${LANG_BACK}</a>
 		<input class="b half" type="submit" value="${LANG_UPLOAD}">
 	</form>
 </div>

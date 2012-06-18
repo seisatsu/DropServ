@@ -40,7 +40,8 @@ class BasePages(Objects.Extension):
                 for x in ["oldpass", "newpass", "newpass2"]:
                     if x not in request.form:
                         return self.generateError("400 Bad Request", etext="wat", return_to="/manage")
-                if self.instance.Database.getUser(request.user)["pass"] != hashlib.sha512(request.form["oldpass"].value.decode("utf-8")).hexdigest():
+                user = self.instance.Database.getUser(request.user)
+                if (self.instance.func.hashPassword(request.form["oldpass"].value.decode("utf-8"), salt=user["salt"])[0] != user["pass"]):
                     return self.generateError("400 Bad Request", etext="Password incorrect.", return_to="/manage")
                 elif len(request.form["newpass"].value.decode("utf-8").strip()) <= 4:
                     return self.generateError("400 Bad Request", etext="Passwords must be 5 or more characters in length.", return_to="/manage")
@@ -163,8 +164,12 @@ class BasePages(Objects.Extension):
                         "email": request.user,
                         "size": len(request.form["file"].value)
                     }
+                    if "long" in request.form and request.form["long"].value == "on":
+                        a = self.instance.conf["LongDropURLLength"]
+                    else:
+                        a = self.instance.conf["DropURLLength"]
                     while True:
-                        table["drop"] = self.instance.func.mkstring(self.instance.conf["DropURLLength"])
+                        table["drop"] = self.instance.func.mkstring(a)
                         try:
                             self.instance.Database[table["drop"]]
                         except KeyError:
@@ -201,9 +206,9 @@ class BasePages(Objects.Extension):
                             Headers["Content-Type"] = dropdata[0][3]
                             try:
                                 dropdata[0][4].decode('ascii')
-                                Headers["Content-Disposition"] = "inline; filename*={0}".format(urllib.quote(dropdata[0][4].decode("ascii")))
+                                Headers["Content-Disposition"] = "inline; filename={0}".format(urllib.quote(dropdata[0][4].decode("ascii")))
                             except UnicodeEncodeError:
-                                Headers["Content-Disposition"] = "inline; filename=file.{1}; filename*={0}".format(urllib.quote(dropdata[0][4].encode("utf-8")), dropdata[0][4].split(".")[-1])
+                                Headers["Content-Disposition"] = "inline; filename={0}".format(urllib.quote(dropdata[0][4].encode("utf-8")))
                             self.instance.Database.bumpViews(dropdata[0][0])
                     else:
                         Headers["Content-Type"] = mimetypes.guess_type(filepath, strict=True)[0] or "text/plain"
