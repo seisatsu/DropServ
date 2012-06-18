@@ -5,6 +5,7 @@ import Objects
 import rfc822
 import os
 import time
+import magic
 import mimetypes
 mimetypes.init()
 import math
@@ -18,6 +19,7 @@ class BasePages(Objects.Extension):
     PERMISSIONS = ["base"]
     def __init__(self, PyBoard):
         Objects.Extension.__init__(self, PyBoard)
+        self.magic = magic.Magic(mime=True)
         self.addPage("/", self.checkAuth)
         self.addPage("/upload", self.doPost)
         self.addPage("/delete", self.contentDestructor)
@@ -84,7 +86,7 @@ class BasePages(Objects.Extension):
                 l = self.instance.Database.getDropsByUser(request.user)
             akey = self.instance.Database.getUser(request.user)["apikey"]
             for dropstr in l:
-                o.append("""\
+                o.append(u"""\
 <tr class="ms">
     <td class="cbc"><input class="ub-check" type="checkbox" name="del_{0[url]}"></td>
     <td><a href='/{0[url]}'>/{0[url]}</a></td>
@@ -153,13 +155,7 @@ class BasePages(Objects.Extension):
                 if request.authenticated:
                     if len(request.form["file"].value) > self.instance.conf["MaxFileSize"]:
                         return self.generateError("400 Bad Request", etext="Your file is too large.", return_to="/upload")
-                    mime = mimetypes.guess_type(request.form["file"].filename, strict=True)
-                    if mime[1]:
-                        mime = mime[1]
-                    elif mime[0]:
-                        mime = mime[0]
-                    else:
-                        mime = "application/octet-stream"
+                    mime = self.magic.from_buffer(request.form["file"].value)
                     table = {
                         "mimetype": mime,
                         "realname": request.form["file"].filename.decode("utf-8"),
@@ -196,16 +192,21 @@ class BasePages(Objects.Extension):
                 filepath = filepath + "/index.html"
             if os.path.isfile(filepath):
                 if os.access(filepath, os.R_OK):
-                    Headers["Content-Type"] = mimetypes.guess_type(filepath)[0] or "text/plain"
-                    if re.match(r"/([A-Za-z0-9]){4}", request.url):
+                    if re.match(r"/([A-Za-z0-9])+$", request.url):
                         try:
                             dropdata = self.instance.Database[request.url.strip("/")]
                         except KeyError:
                             dropdata = None
                         if dropdata:
                             Headers["Content-Type"] = dropdata[0][3]
-                            Headers["Content-Disposition"] = "inline; filename={0}".format(urllib.quote(dropdata[0][4]))
+                            try:
+                                dropdata[0][4].decode('ascii')
+                                Headers["Content-Disposition"] = "inline; filename*={0}".format(urllib.quote(dropdata[0][4].decode("ascii")))
+                            except UnicodeEncodeError:
+                                Headers["Content-Disposition"] = "inline; filename=file.{1}; filename*={0}".format(urllib.quote(dropdata[0][4].encode("utf-8")), dropdata[0][4].split(".")[-1])
                             self.instance.Database.bumpViews(dropdata[0][0])
+                    else:
+                        Headers["Content-Type"] = mimetypes.guess_type(filepath, strict=True)[0] or "text/plain"
                     moddate = time.gmtime(os.path.getmtime(filepath))
                     if request.contains("If-Modified-Since") and not filepath.endswith('.html'):
                         sincets = time.mktime(rfc822.parsedate(request['If-Modified-Since']));

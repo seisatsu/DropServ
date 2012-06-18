@@ -51,12 +51,8 @@ class Functions(object):
             salt = self.mkstring(len(password))
         else:
             salt = str(salt)
-        print password
-        print salt
         saltedPass = "".join(map(lambda x, y: x + y, password, salt))
-        print saltedPass
         hashed = hashlib.sha512(saltedPass).hexdigest()
-        print hashed
         return (hashed, salt)
 
     def mkstring(self, length):

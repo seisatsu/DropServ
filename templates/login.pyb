@@ -14,7 +14,7 @@
 		<input class="text" type="text" name="email" placeholder="${LANG_EMAIL}"><br>
 		<input class="text" type="password" name="password" placeholder="${LANG_PASSWORD}"><br>
 		<input class="b half" type="submit" value="${LANG_LOGIN}">
-		<a href="/register"><button class="b half">${LANG_REGISTER}</button></a>
+		<a href="/register" class="b half">${LANG_REGISTER}</a>
 	</form>
 </div>
 <div class="footer">
