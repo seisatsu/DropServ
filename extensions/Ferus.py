@@ -10,12 +10,12 @@ class main(Objects.Extension):
         self.addPage("/api", self.info)
     
     def info(self, request):
-        if re.match(r"^file\=[A-Za-z0-9]{4}$", request.query):
+        if re.match(r"^file\=[A-Za-z0-9]+$", request.query):
             dropname = re.findall(r"^file\=([A-Za-z0-9]{4})$", request.query)[0]
             try:
                 db_data = self.instance.Database[dropname][0]
             except KeyError:
-                return Objects.Response(s="404 Not Found", h={"Content-Type": "application/json"}, r="{}")
+                return Objects.Response(s="404 Not Found", h={"Content-Type": "application/json"}, r="{error: 'not found'}")
             js_data = {
                           "mimetype": db_data[3],
                           "filename": db_data[4],
