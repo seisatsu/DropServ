@@ -29,10 +29,14 @@ class Framework(object):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             self.load_extensions() # This raises RuntimeWarnings, which we really don't need to care about.
-        if os.path.exists(self.workd+"/data/Puush.sqlite3"):
-            self.Database = Database.DropDatabase(self.workd+"/data/Puush.sqlite3", self)
+        if os.path.exists(self.workd+"/data/ds.sqlite3"):
+            self.Database = Database.DropDatabase(self.workd+"/data/ds.sqlite3", self)
         else:
-            self.Database = Database.DropDatabase(self.workd+"/data/Puush.sqlite3", self, init=True)
+            if os.path.exists(self.workd+"/data/Puush.sqlite3"):
+                os.rename(self.workd+"/data/Puush.sqlite3", self.workd+"/data/ds.sqlite3")
+                self.Database = Database.DropDatabase(self.workd+"/data/ds.sqlite3", self)
+            else:
+                self.Database = Database.DropDatabase(self.workd+"/data/ds.sqlite3", self, init=True)
         mimetypes.init()
         t = time.time() - t
         print(self.lang["PB_DONE"].format(t="{:03.2f}".format(t)))
