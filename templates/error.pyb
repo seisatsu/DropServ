@@ -9,7 +9,7 @@
 <div id="fade"></div>
 <div class="centre">
 	<h1>{{heading}}</h1><br>
-	<h3>{{errmsg}}</h3>
+	<h3>{{{errmsg}}}</h3>
 	<a href="{{retlocation}}" rel="return" title="{{BACK}}">{{BACK}}</a>
 </div>
 <div class="footer">
