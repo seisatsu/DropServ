@@ -1,11 +1,11 @@
 body {
 	height:100%;
-	margin:2em 0 1em 0;
-	background-color:rgb(237,241,255);
+	margin:0em 0 1em 0;
+	background-color:rgb(230,230,230);
 	font-family:Arial;
 	font-size:10pt;
 }
-#fade {
+/*#fade {
 	background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(209,213,238)), color-stop(100%,rgb(237,241,255)));
 	background: -moz-linear-gradient(top, rgb(209,213,238) 0%, rgb(237,241,255) 100%);
 	background: -o-linear-gradient(rgb(209,213,238), rgb(237,241,255));
@@ -15,13 +15,26 @@ body {
 	right:0;
 	z-index:-1;
 	height: 220px;
+}*/
+#fade {
+	display:none;
 }
 h1 {
-	color:rgb(175,10,15);
-	font-family:'Helvetica Neue', Helvetica, sans-serif;
-	font-size:20pt;	
-	margin-bottom:0.1em;
-	padding-bottom:0;
+	background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(240,240,240)), color-stop(100%,rgb(220,220,220)));
+	background-image: -moz-linear-gradient(top, rgb(209,213,238) 0%, rgb(237,241,255) 100%);
+	background-image: -o-linear-gradient(rgb(209,213,238), rgb(237,241,255));
+	color:rgb(20,20,20);
+	font-family:Helvetica, sans-serif;
+	font-size:14pt;	
+	margin-bottom:0;
+	margin-top:0;
+	height:48px;
+	line-height:48px;
+	text-align:left;
+	text-shadow:0px 1px 0px rgb(240,240,240);
+	padding:0 1em;
+	box-shadow:0px 1px 2px rgba(0,0,0,0.45);
+	border-bottom:1px solid rgb(240,240,240);
 }
 .footer {
 	color:rgb(0,6,53);

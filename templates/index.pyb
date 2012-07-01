@@ -9,6 +9,7 @@
 <body>
 <div id="fade"></div>
 <div class="centre postform">
+    <h1>DropServ</h1><br>
 	<a href="/upload"><button class="b">{{UPLOAD}}</button></a><br>
 	<a href="/manage"><button class="b">{{MANAGE}}</button></a>
 </div>

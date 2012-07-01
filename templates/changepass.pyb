@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <title>\( ._.)/</title>
+        <link rel="stylesheet" href="{{constant.static}}/style/main.css">
+        <link rel="stylesheet" href="{{constant.static}}/style/form.css">
+    </head>
+    <body>
+        <div id="fade"></div>
+        <div class="centre postform">
+			<h1>{{CHANGEPASS}}</h1><br>
+			<form id="change_pass" action="/change_pass" enctype="multipart/form-data" method="post">
+				<input class="text" type="password" name="oldpass" placeholder="{{OLD_PASS}}"><br>
+				<input class="text" type="password" name="newpass" placeholder="{{NEW_PASS}}"><br>
+				<input class="text" type="password" name="newpass2" placeholder="{{CONFIRM_PASS}}"><br><br>
+				<input class="b half" type="submit" value="{{CHANGEPASS}}">
+			</form>
+        </div>
+        <div class="footer">
+            <span class='footer-span'>{{POWEREDBY}} {{constant.version}}</span>
+        </div>
+    </body>
+</html>
