@@ -2,23 +2,23 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
-		<title>${LANG_UPLOAD}</title>
-		<link rel="stylesheet" href="${STATIC}/style/main.css">
-		<link rel="stylesheet" href="${STATIC}/style/form.css">
+		<title>{{UPLOAD}}</title>
+		<link rel="stylesheet" href="{{constant.static}}/style/main.css">
+		<link rel="stylesheet" href="{{constant.static}}/style/form.css">
 	</head>
 <body>
 <div id="fade"></div>
 <div class="centre postform">
-	<h1>${LANG_UPLOAD}</h1><br>
+	<h1>{{UPLOAD}}</h1><br>
 	<form name="input" action="/upload" method="post" enctype="multipart/form-data">
 		<input class='text ft' type='file' name='file'><br>
-		<div class="text ft pm"><input type="checkbox" name="long"> <label for="long">Long URL</label></div>
-		<a class="b half" href="/">${LANG_BACK}</a>
-		<input class="b half" type="submit" value="${LANG_UPLOAD}">
+		<div class="text ft pm"><input type="checkbox" name="long"> <label for="long">{{LONGURL}}</label></div>
+		<a class="b half" href="/">{{BACK}}</a>
+		<input class="b half" type="submit" value="{{UPLOAD}}">
 	</form>
 </div>
 <div class="footer">
-<span class='footer-span'>${LANG_POWEREDBY} ${VERSION}</span>
+<span class='footer-span'>{{POWEREDBY}} {{constant.version}}</span>
 </div>
 </body>
 </html>

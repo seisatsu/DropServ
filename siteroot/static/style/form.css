@@ -8,8 +8,7 @@
 	box-shadow:inset 0px 1px 1px rgba(0,0,0,0.12), 0px 1px 0px rgba(255,255,255,0.35);
 	border:1px solid rgba(0,0,0,0.40);
 	padding:0.5em;
-	font-family:'Helvetica Neue', Helvetica, sans-serif;
-	font-weight:200;
+	font-family:Helvetica, sans-serif;
 	font-size:10pt;
 	color:#000;
 	outline:none;
@@ -37,7 +36,7 @@
 	width:200px;
 	margin-bottom:1em;
 	padding:7px 0;
-	margin-left:1px;
+	margin-right:1px;
 	box-sizing:border-box;
 }
 .b.half {

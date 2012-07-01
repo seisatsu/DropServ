@@ -120,9 +120,9 @@ class Extension(object):
 
     def generateError(self, status="500 Internal Server Error", heading="Error", return_to="/", etext="An unspecified error occurred."):
         error = {
-            "HEADING": unicode(heading),
-            "ERRMSG": unicode(etext),
-            "RETLOCATION": unicode(return_to)
+            "heading": unicode(heading),
+            "errmsg": unicode(etext),
+            "retlocation": unicode(return_to)
         }
         return Response(s=status, h={"Content-Type": "text/html"}, r=self.instance.func.page_format(v=error, template="error.pyb"))
 

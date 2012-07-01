@@ -2,18 +2,18 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
-		<title>${HEADING}</title>
-		<link rel="stylesheet" href="${STATIC}/style/main.css">
+		<title>{{heading}}</title>
+		<link rel="stylesheet" href="{{constant.static}}/style/main.css">
 	</head>
 <body>
 <div id="fade"></div>
 <div class="centre">
-	<h1>${HEADING}</h1><br>
-	<h3>${ERRMSG}</h3>
-	<a href="${RETLOCATION}" rel="return" title="${LANG_BACK}">${LANG_BACK}</a>
+	<h1>{{heading}}</h1><br>
+	<h3>{{errmsg}}</h3>
+	<a href="{{retlocation}}" rel="return" title="{{BACK}}">{{BACK}}</a>
 </div>
 <div class="footer">
-<span class='footer-span'>${LANG_POWEREDBY} ${VERSION}</span>
+<span class='footer-span'>{{POWEREDBY}} {{constant.version}}</span>
 </div>
 </body>
 </html>

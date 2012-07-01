@@ -9,6 +9,7 @@ import random
 import threading
 import math
 from collections import deque
+import pystache
 allchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ123456789"
 
 class Functions(object):
@@ -18,10 +19,8 @@ class Functions(object):
     def __init__(self, PyBoard):
         self.instance = PyBoard
         self.TemplateCache = deque()
-        self.TemplateConstants = {
-            "VERSION": self.instance.conf["__version"],
-            "STATIC": self.instance.conf["StaticDomain"].strip("/") or "/static",
-        }
+        self.TemplateConstants = None
+        self._refreshConstants()
         self.file_locks = {};
         print(self.instance.lang["FUNC_LOADED"])
 
@@ -78,7 +77,7 @@ class Functions(object):
                 print("Removed template: {0} from cache.".format(self.TemplateCache.popleft()[0]));
             for item in self.TemplateCache:
                 if item[0] == template:
-                    temp = string.Template(item[1]);
+                    temp = item[1]
                     break;
             if not temp:
                 if template not in self.file_locks:
@@ -89,7 +88,6 @@ class Functions(object):
                         temp = plate.read();
                         self.TemplateCache.append((template, temp, time.time()));
                         print("Cached template: {0}".format(template));
-                        temp = string.Template(temp);
                     self.file_locks[template].release();    
                 except IOError:
                     if template in self.file_locks:
@@ -97,7 +95,7 @@ class Functions(object):
                         del self.file_locks[template];
                     return "";
         elif TemplateString != "":
-            temp = string.Template(TemplateString);
+            temp = TemplateString;
         else:
             return "";
         for x in v:
@@ -106,7 +104,7 @@ class Functions(object):
                     v[x] = v[x].decode("utf-8")
                 except:
                     pass
-        formatted = temp.safe_substitute(dict(self.TemplateConstants.items() + self.instance.lang.getDict.items() + v.items()));
+        formatted = pystache.render(temp, dict(self.TemplateConstants.items() + self.instance.lang.getDict.items() + v.items()))
         return formatted.encode("utf-8");
 
     def read_faster(self, file, close=True):
@@ -119,6 +117,12 @@ class Functions(object):
         if close:
             file.close()
         return
+
+    def _refreshConstants(self):
+        self.TemplateConstants = {
+            "constant.version": self.instance.conf["__version"],
+            "constant.static": "/static",
+        }
 
     def verifyLogin(self, crumb, origin):
         pair = crumb.split('|')

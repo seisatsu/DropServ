@@ -26,7 +26,7 @@ class BasePages(Objects.Extension):
         self.addPage("/login", self.loginUser)
         self.addPage("/register", self.registerUser)
         self.addPage("/manage", self.listDrops)
-        self.addPage("/changePass", self.changePassword)
+        self.addPage("/change_pass", self.changePassword)
 
     def checkAuth(self, request):
         if request.authenticated:
@@ -50,6 +50,8 @@ class BasePages(Objects.Extension):
                 else:
                     self.instance.Database.changeUserPassword(request.user, request.form["newpass"].value.decode("utf-8").strip())
                     return self.generateError("200 OK", heading="OK", etext="Password updated.", return_to="/manage")
+            else:
+                return Objects.Response(s="200 OK", h={"Cache-Control": "no-cache; max-age=0"}, r=self.instance.func.page_format(v={}, template="changepass.pyb"))
         else:
             return Objects.Response(s="303 See Other", h={"Location": "/login"}, r="")
     
@@ -87,19 +89,10 @@ class BasePages(Objects.Extension):
                 l = self.instance.Database.getDropsByUser(request.user)
             akey = self.instance.Database.getUser(request.user)["apikey"]
             for dropstr in l:
-                o.append(u"""\
-<tr class="ms">
-    <td class="cbc"><input class="ub-check" type="checkbox" name="del_{0[url]}"></td>
-    <td><a href='/{0[url]}'>/{0[url]}</a></td>
-    <td>{0[owner]}</td>
-    <td>{0[name]}</td>
-    <td>{0[type]}</td>
-    <td>{time}</td>
-    <td>{size}</td>
-    <td>{0[views]}</td>
-</tr>
-                """.format(dropstr, time=time.strftime("%a, %d %b %Y %H:%M:%S %Z", time.localtime(dropstr["timestamp"])), size=self.instance.func.file_size(dropstr["size"])))
-            return Objects.Response(s="200 OK", h={"Cache-Control": "no-cache; max-age=0"}, r=self.instance.func.page_format(v={"DROPS": "".join(o), "APIKEY": akey}, template="manage.pyb"))
+                dropstr["time"] = time.strftime("%a, %d %b %Y %H:%M:%S %Z", time.localtime(dropstr["timestamp"]))
+                dropstr["size"] = self.instance.func.file_size(dropstr["size"])
+                o.append(dropstr)
+            return Objects.Response(s="200 OK", h={"Cache-Control": "no-cache; max-age=0"}, r=self.instance.func.page_format(v={"drops": o, "apikey": akey}, template="manage.pyb"))
         else:
             return Objects.Response(s="303 See Other", h={"Location": "/login"}, r="")
 
