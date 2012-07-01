@@ -68,10 +68,12 @@ class Functions(object):
                 s += random.choice(allchars)
         return s
 
-    def page_format(self, v={}, template=None, TemplateString=""):
+    def page_format(self, v={}, template=None, TemplateString="", root=None):
         """Format pages (obv)"""
         temp = None
-        if template is not None:
+        if root == None:
+            root = self.instance.workd + "/templates"
+        if template != None:
             if len(self.TemplateCache) >= 5:
                 print("Removed template: {0} from cache.".format(self.TemplateCache.popleft()[0]));
             for item in self.TemplateCache:
@@ -83,7 +85,7 @@ class Functions(object):
                     self.file_locks[template] = threading.RLock();
                 self.file_locks[template].acquire();
                 try:
-                    with open(self.instance.workd + "/templates/{0}".format(template), "r") as plate:
+                    with open(root + "/{0}".format(template), "r") as plate:
                         temp = plate.read();
                         self.TemplateCache.append((template, temp, time.time()));
                         print("Cached template: {0}".format(template));

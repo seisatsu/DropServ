@@ -115,6 +115,9 @@ class Extension(object):
             headers = {}
         return Response(s="303 See Other", h=dict(headers.items() + [("Location", location)]), r="")
 
+    def page_format(self, v={}, template=None, TemplateString=""):
+        return self.instance.func.page_format(v=v, template=template, TemplateString="", root=self.dataFolder)
+
     def generateError(self, status="500 Internal Server Error", heading="Error", return_to="/", etext="An unspecified error occurred."):
         error = {
             "HEADING": unicode(heading),
