@@ -101,7 +101,7 @@ class Functions(object):
         for x in v:
             if isinstance(v[x], basestring):
                 try:
-                    v[x] = v[x].decode("utf-8")
+                    v[x] = v[x].decode("utf-8").replace("{", "&#123;").replace("}", "&#125;")
                 except:
                     pass
         formatted = pystache.render(temp, dict(self.TemplateConstants.items() + self.instance.lang.getDict.items() + v.items()))
