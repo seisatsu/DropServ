@@ -147,15 +147,19 @@ class BasePages(Objects.Extension):
                 return self.generateError("400 Bad Request", etext="Didn't upload anything.")
             else:
                 if request.authenticated:
-                    if len(request.form["file"].value) > self.instance.conf["MaxFileSize"]:
+                    request.form["file"].file.seek(0, 2)
+                    fsize = request.form["file"].file.tell()
+                    request.form["file"].file.seek(0, 0)
+                    if fsize > self.instance.conf["MaxFileSize"]:
                         return self.generateError("400 Bad Request", etext="Your file is too large.", return_to="/upload")
-                    mime = self.magic.from_buffer(request.form["file"].value)
+                    mime = self.magic.from_buffer(request.form["file"].file.read(1024))
+                    request.form["file"].file.seek(0, 0)
                     table = {
                         "mimetype": mime,
                         "realname": request.form["file"].filename.decode("utf-8"),
                         "ts": int(math.floor(time.time())),
                         "email": request.user,
-                        "size": len(request.form["file"].value)
+                        "size": fsize,
                     }
                     if "long" in request.form and request.form["long"].value == "on":
                         a = self.instance.conf["LongDropURLLength"]

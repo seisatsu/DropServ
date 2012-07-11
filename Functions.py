@@ -9,7 +9,7 @@ import random
 import threading
 import math
 from collections import deque
-import pystache
+from pystache import Renderer
 allchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ123456789"
 
 class Functions(object):
@@ -101,10 +101,10 @@ class Functions(object):
         for x in v:
             if isinstance(v[x], basestring):
                 try:
-                    v[x] = v[x].decode("utf-8").replace("{", "&#123;").replace("}", "&#125;")
+                    v[x] = v[x].decode("utf-8")
                 except:
                     pass
-        formatted = pystache.render(temp, dict(self.TemplateConstants.items() + self.instance.lang.getDict.items() + v.items()))
+        formatted = Renderer().render(temp, self.instance.lang.getDict, v, constant=self.TemplateConstants)
         return formatted.encode("utf-8");
 
     def read_faster(self, file, close=True):
@@ -120,8 +120,8 @@ class Functions(object):
 
     def _refreshConstants(self):
         self.TemplateConstants = {
-            "constant.version": self.instance.conf["__version"],
-            "constant.static": "/static",
+            "version": self.instance.conf["__version"],
+            "static": "/static",
         }
 
     def verifyLogin(self, crumb, origin):

@@ -23,15 +23,19 @@ class main(Objects.Extension):
                 return Objects.Response(s="400 Bad Request", h={"Content-Type": "text/plain"}, r="auth failed\n")
             if not request.form["f"].filename:
                 return Objects.Response(s="400 Bad Request", h={"Content-Type": "text/plain"}, r="no file\n")
-            if len(request.form["f"].value) > self.instance.conf["MaxFileSize"]:
+            request.form["f"].file.seek(0, 2)
+            fsize = request.form["f"].file.tell()
+            request.form["f"].file.seek(0, 0)
+            if fsize > self.instance.conf["MaxFileSize"]:
                 return Objects.Response(s="400 Bad Request", h={"Content-Type": "text/plain"}, r="file too large\n")
-            mime = self.magic.from_buffer(request.form["f"].value)
+            mime = self.magic.from_buffer(request.form["f"].file.read(1024))
+            request.form["f"].file.seek(0, 0)
             table = {
                 "mimetype": mime,
                 "realname": request.form["f"].filename.decode("utf-8"),
                 "ts": int(time.time()),
                 "email": request.form["u"].value.decode("utf-8"),
-                "size": len(request.form["f"].value)
+                "size": fsize
             }
             if "l" in request.form and request.form["l"].value.isdigit():
                 a = self.instance.conf["LongDropURLLength"]
