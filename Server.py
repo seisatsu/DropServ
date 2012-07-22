@@ -39,7 +39,7 @@ class Framework(object):
                 self.Database = Database.DropDatabase(self.workd+"/data/ds.sqlite3", self, init=True)
         mimetypes.init()
         t = time.time() - t
-        print(self.lang["PB_DONE"].format(t="{:03.2f}".format(t)))
+        print(self.lang["PB_DONE"].format(t="{0:03.2f}".format(t)))
 
     def load_extensions(self):
         print(self.lang["PB_EXTENSION_LOAD_START"])

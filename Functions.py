@@ -28,9 +28,9 @@ class Functions(object):
         kb = num / 1024
         if kb > 1000:
             mb = kb / 1024
-            return "{:03.2f} MB".format(mb)
+            return "{0:03.2f} MB".format(mb)
         else:
-            return "{:03.2f} KB".format(kb)
+            return "{0:03.2f} KB".format(kb)
 
     def genAuthToken(self, user, origin):
         while True:
